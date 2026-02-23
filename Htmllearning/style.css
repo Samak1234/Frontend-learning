@@ -1,0 +1,317 @@
+/* ================================
+   CSS LESSON 1 - HACKER TERMINAL
+   ================================ */
+
+/* === CONCEPT 1: CSS Variables ===
+   Store values you reuse often.
+   Change one place = changes everywhere */
+
+:root {
+  --green: #00ff41;
+  --dark-green: #00aa2b;
+  --bg: #0a0a0a;
+  --panel-bg: #0f0f0f;
+  --border: #00ff4133;
+}
+
+/* === CONCEPT 2: Universal Reset ===
+   By default browsers add margin/padding to elements.
+   This removes all of that so YOU control everything */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  /* box-sizing: border-box means:
+     padding and border are INCLUDED in width/height
+     This makes layout math much easier */
+}
+
+/* === CONCEPT 3: Body Styling ===
+   Everything sits inside body */
+
+body {
+  background-color: var(--bg);
+  color: var(--green);
+  font-family: 'Courier New', Courier, monospace;
+  min-height: 100vh;
+  /* vh = viewport height. 100vh = full screen height */
+  padding: 20px;
+  /* padding = space INSIDE the element, between content and border */
+  line-height: 1.6;
+  /* space between lines of text */
+}
+
+/* === CONCEPT 4: Selectors ===
+   h1, h2 = element selector (targets all h1/h2 tags)
+   .classname = class selector
+   #id = id selector */
+
+header {
+  text-align: center;
+  padding: 20px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 20px;
+  /* margin = space OUTSIDE the element, pushing other things away */
+}
+
+h1 {
+  font-size: 2rem;
+  /* rem = relative to root font size. 1rem = 16px usually */
+  text-shadow: 0 0 10px var(--green);
+  /* text-shadow: x-offset y-offset blur color */
+  /* This creates the glow effect */
+  letter-spacing: 4px;
+}
+
+h2 {
+  color: var(--dark-green);
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+h3 {
+  color: var(--green);
+  margin-bottom: 8px;
+}
+
+/* === CONCEPT 5: The Box Model ===
+
+   Every element is a box:
+   
+   ┌─────────────────────────┐
+   │         MARGIN          │  ← pushes other elements away
+   │  ┌───────────────────┐  │
+   │  │      BORDER       │  │  ← the visible edge
+   │  │  ┌─────────────┐  │  │
+   │  │  │   PADDING   │  │  │  ← space inside, between content and border
+   │  │  │  ┌───────┐  │  │  │
+   │  │  │  │CONTENT│  │  │  │
+   │  │  │  └───────┘  │  │  │
+   │  │  └─────────────┘  │  │
+   │  └───────────────────┘  │
+   └─────────────────────────┘
+
+   This is THE most important concept in CSS. */
+
+/* Reusable panel style for sections */
+section, article, details {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  padding: 15px 20px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+/* === CONCEPT 6: Pseudo-classes ===
+   :hover = when mouse is over the element */
+
+section:hover, article:hover {
+  border-left-color: var(--dark-green);
+  background-color: #111;
+}
+
+/* pre tag - terminal output blocks */
+pre {
+  background-color: #050505;
+  border: 1px solid var(--border);
+  padding: 15px;
+  margin-bottom: 15px;
+  overflow-x: auto;
+  /* if content is wider than screen, scroll horizontally */
+  font-size: 0.85rem;
+  color: var(--green);
+  border-radius: 4px;
+}
+
+/* address tag - user info */
+address {
+  font-style: normal;
+  /* by default address is italic, this removes that */
+  line-height: 2;
+}
+
+/* ul - lists */
+ul {
+  list-style: none;
+  /* removes the default bullet points */
+}
+
+ul li {
+  padding: 5px 0;
+  border-bottom: 1px solid #111;
+}
+
+ul li::before {
+  /* ::before is a pseudo-element
+     It inserts content BEFORE each li without adding HTML */
+  content: '> ';
+  color: var(--green);
+}
+
+/* nav links */
+nav ul li {
+  display: inline-block;
+  /* makes list items sit side by side instead of stacked */
+  margin-right: 20px;
+  border-bottom: none;
+}
+
+nav ul li::before {
+  content: '';
+  /* override the > from above, nav items don't need it */
+}
+
+nav a {
+  color: var(--green);
+  text-decoration: none;
+  /* removes underline from links */
+  padding: 5px 10px;
+  border: 1px solid var(--border);
+}
+
+nav a:hover {
+  background-color: var(--green);
+  color: black;
+}
+
+/* progress bars */
+progress {
+  width: 200px;
+  height: 12px;
+  margin-left: 10px;
+  accent-color: var(--green);
+  /* accent-color changes the fill color of progress/input elements */
+}
+
+/* form */
+form {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--green);
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 4px;
+}
+
+input {
+  background-color: #000;
+  color: var(--green);
+  border: 1px solid var(--dark-green);
+  padding: 8px 12px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 8px 0;
+  outline: none;
+  /* removes the blue glow browsers add on focus */
+}
+
+input:focus {
+  /* :focus = when user clicks into the input */
+  border-color: var(--green);
+  box-shadow: 0 0 8px var(--green);
+}
+
+button {
+  background-color: transparent;
+  color: var(--green);
+  border: 1px solid var(--green);
+  padding: 8px 20px;
+  font-family: 'Courier New', monospace;
+  cursor: pointer;
+  /* changes mouse cursor to hand on hover */
+  margin-top: 10px;
+  font-size: 0.9rem;
+}
+
+button:hover {
+  background-color: var(--green);
+  color: black;
+}
+
+/* code and kbd tags */
+code {
+  color: #00ff41;
+  background-color: #111;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.9rem;
+}
+
+kbd {
+  background-color: #222;
+  color: var(--green);
+  border: 1px solid var(--dark-green);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 0.85rem;
+}
+
+/* mark tag - highlighted text */
+mark {
+  background-color: var(--green);
+  color: black;
+  padding: 2px 6px;
+  font-weight: bold;
+}
+
+/* samp tag */
+samp {
+  color: #00ff41;
+  font-size: 0.9rem;
+}
+
+/* footer */
+footer {
+  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 10px;
+  text-align: center;
+  color: var(--dark-green);
+  font-size: 0.8rem;
+}
+
+/* details/summary */
+details summary {
+  cursor: pointer;
+  color: var(--green);
+  padding: 5px 0;
+}
+
+details summary:hover {
+  color: white;
+}
+
+/* time tag */
+time {
+  color: var(--dark-green);
+  font-size: 0.85rem;
+}
+
+/* === CONCEPT 7: CSS Animations ===
+   @keyframes defines the animation
+   Then you apply it to any element */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { text-shadow: 0 0 5px var(--green); }
+  50% { text-shadow: 0 0 20px var(--green), 0 0 40px var(--green); }
+}
+
+h1 {
+  animation: glow-pulse 2s infinite;
+  /* animation: name duration repeat */
+}
+
+/* Blinking cursor on header */
+header h1::after {
+  content: '_';
+  animation: blink 1s infinite;
+}
