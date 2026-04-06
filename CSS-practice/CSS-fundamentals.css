@@ -58,3 +58,70 @@ header{
 .btn:hover{
    background: darkblue;
 }
+/*Actual Width = width + padding + border*/
+.box{
+    width:120px;
+    padding:10px;
+    border:5px solid black;
+}
+/*100 + 20 (padding both sides) + 10 (border both sides)
+= 130px*/
+* {
+    box-sizing: border-box;
+}
+/*     * = universal selector
+It makes every element on your webpage calculate its width and height in a much easier way.
+
+Without it (default):
+When you set width: 300px, and then add padding or border… the box becomes bigger than 300px. (Padding + border are added extra)
+With it (box-sizing: border-box):Width includes padding and border.
+When you set width: 300px, padding and border are included inside that 300px. So the total size stays exactly 300px.*/
+.box{
+    height:100px;
+}
+/*Right now boxes are left-aligned.
+
+To center them horizontally:
+Because:
+
+auto left + auto right = center
+
+This only works for block elements with width set.*/
+
+
+/*This is shorthand for:
+
+margin-top: 15px;
+margin-bottom: 15px;
+margin-left: auto;
+margin-right: auto;
+
+So:
+
+15px → vertical spacing
+
+auto → horizontal centering
+The 15px has NOTHING to do with centering.
+
+It just adds space above and below.*/
+/* Reset box to normal position */
+.box {
+    position: static;   /* default behaviour - follows normal flow */
+                        /* used to override 'relative' from parent */
+}
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+/*Flexbox is used to:
+
+Align items horizontally or vertically easily.*/
+
+/* Change .container to .box-section */
+.box-section {
+    display: flex;
+    justify-content: center;
+    gap: 10px; /* Optional: adds nice spacing between them */
+}

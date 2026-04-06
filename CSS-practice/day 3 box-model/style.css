@@ -1,0 +1,42 @@
+/* --- 1. THE BOX MODEL LAB SETUP --- */
+* {
+  margin: 0;
+  padding: 0;
+  /* Note: We aren't setting box-sizing here yet so you can see the difference! */
+}
+
+body {
+  background-color: #1a1a1a; /* Dark background like your screenshot */
+  color: white;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 50px;
+}
+
+/* --- 2. BASE BOX STYLES --- */
+.box {
+  width: 300px;        /* The "Content" width */
+  height: 100px;
+  padding: 30px;       /* The "Cushion" inside */
+  border: 10px solid #f1c40f; /* The "Wall" (Yellow) */
+  margin: 40px;        /* The "Distance" outside */
+  background-color: #3498db;  /* Blue background */
+  text-align: center;
+  font-weight: bold;
+}
+
+/* --- 3. THE TWO DIFFERENT MATH MODELS --- */
+
+/* Standard: The box GROWS (300 + 30 + 30 + 10 + 10 = 380px total) */
+.standard {
+  box-sizing: content-box; 
+}
+
+/* Modern: The box STAYS 300px (The padding/border shrink the inside) */
+.modern {
+  box-sizing: border-box;
+  background-color: #2ecc71; /* Green */
+  border-color: #27ae60;
+}

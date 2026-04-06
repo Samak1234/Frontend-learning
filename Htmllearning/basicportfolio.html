@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><!--Invisible part (inside <html> tag). 
+    It contains metadata like title, meta tags, CSS link, JavaScript, etc.
+     User cannot see anything inside <head>.-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Superb</title>
+        <link rel="stylesheet" href="style1.css">
+         <link rel="icon" href="favicon.png">
+</head>
+<body>
+    <header><!--top part of the page and 
+        Visible part (inside <body> tag). It contains things user can actually see like logo, menu, headline.-->
+        <h1>Samaksh</h1><!--title of the page/sabse bada heading-->
+        <!--only one h1 per page ideally-->
+        <p>Aspiring frontend developer</p>
+    </header>
+    <nav><!--navigation links-->
+        <ul><!--unordered list-->
+       <li> <a href="#about">About</a> </li><!--list item -->
+        <li><a href="#skills">skills</a> </li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+        </ul>
+        <!--The letter “a” stands for anchor (old name for link).
+        a = anchor tag
+        
+         It is used to create hyperlinks.
+
+         A hyperlink lets users jump to another page or location
+         
+         href = Hypertext Reference
+
+         -->
+         <!--# means:
+
+          "Find an element on this page with this ID."-->
+
+    </nav>
+    <main><!--main content-->
+        <section id="about">
+            <h2>About me</h2>
+            <p> I am a second year b.tech cse student learning frontend development and ultimately aiming to become a
+                full stack developer 
+            </p>
+            <a href="https://mail.google.com/mail/?view=cm&to=Samakshdubey9@gmail.com">Email Me</a>
+            <a href="tel:+918989801832">Call me</a>
+            <img src="profile.jpg" alt = "Samaksh profile photo" width="200">
+        </section>
+
+        <section id="skills">
+        <h2>Skills</h2>
+        <ul>
+            <li>HTML</li>
+            <li>CSS</li>
+            <li>C++</li>
+            <li>Python</li>
+        </ul>
+    </section>
+        <section id="projects">
+        <h2>Projects</h2>
+        <h3>Portfolio Website</h3>
+        <p>A personal portfolio website build using HTML</p>
+       <p> this text is<span style="color:red"> important </span> for learning span and it's styling</p>
+        <a href="https://github.com/" target="_blank">Github</a>
+        <!--target="_blank"
+            This controls how the link opens.
+            _blank means:
+            Open the link in a new tab-->
+            
+    </section>
+    <section id="contact">
+        <h2>Contact me</h2>
+        <form>
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+            <br><br>
+            <label for="email">Email:</label>
+            <input type="email"id="email" name="email" required>
+            <br><br>
+            <label for="message">Message:</label>
+            <br>
+            <textarea id ="message" name="message" required></textarea>
+            <br><br>
+            <button type="submit">Send Message</button>
+        </form>
+    </section>
+    </main>
+<iframe width="420" height="315"
+src="https://www.youtube.com/embed/tgbNymZ7vqY">
+</iframe>
+
+    <footer><!--bottom section-->
+    <p>@Samaksh 2026</p>
+    <a href="https://github.com/Samak1234"target="_blank">Github</a>
+    </footer>
+    
+</body>
+</html>
