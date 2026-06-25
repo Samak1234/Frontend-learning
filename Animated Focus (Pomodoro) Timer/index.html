@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Focus Timer</title>
+  <style>
+    body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f172a; color: #f8fafc; font-family: system-ui; }
+    .timer { text-align: center; }
+    #display { font-size: 6rem; font-variant-numeric: tabular-nums; margin: 20px 0; letter-spacing: -2px; }
+    button { padding: 12px 24px; margin: 6px; font-size: 1rem; border: none; border-radius: 10px; cursor: pointer; background: #3b82f6; color: white; transition: 0.2s; }
+    button:hover { opacity: 0.9; transform: translateY(-1px); }
+    .reset { background: #ef4444; }
+  </style>
+</head>
+<body>
+  <div class="timer">
+    <h1>🍅 Focus Timer</h1>
+    <div id="display">25:00</div>
+    <button id="start">Start</button>
+    <button id="pause" style="display:none;">Pause</button>
+    <button class="reset" id="reset">Reset</button>
+  </div>
+  <script>
+    let time = 25 * 60, interval;
+    const display = document.getElementById('display'), start = document.getElementById('start'), pause = document.getElementById('pause');
+    const fmt = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
+    const update = () => display.textContent = fmt(time);
+    start.onclick = () => {
+      start.style.display = 'none'; pause.style.display = 'inline-block';
+      interval = setInterval(() => { time > 0 ? (time--, update()) : (clearInterval(interval), alert('🎉 Focus complete!')); }, 1000);
+    };
+    pause.onclick = () => { clearInterval(interval); pause.style.display = 'none'; start.style.display = 'inline-block'; };
+    document.getElementById('reset').onclick = () => { clearInterval(interval); time = 25*60; update(); start.style.display = 'inline-block'; pause.style.display = 'none'; };
+  </script>
+</body>
+</html>
