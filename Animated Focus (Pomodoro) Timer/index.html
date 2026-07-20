@@ -1,36 +1,614 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Focus Timer</title>
-  <style>
-    body { margin: 0; height: 100vh; display: flex; align-items: center; justify-content: center; background: #0f172a; color: #f8fafc; font-family: system-ui; }
-    .timer { text-align: center; }
-    #display { font-size: 6rem; font-variant-numeric: tabular-nums; margin: 20px 0; letter-spacing: -2px; }
-    button { padding: 12px 24px; margin: 6px; font-size: 1rem; border: none; border-radius: 10px; cursor: pointer; background: #3b82f6; color: white; transition: 0.2s; }
-    button:hover { opacity: 0.9; transform: translateY(-1px); }
-    .reset { background: #ef4444; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Focus Apparatus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #131210;
+    --panel: #1b1916;
+    --panel-2: #211e19;
+    --border: #38332b;
+    --text: #f2ece0;
+    --text-muted: #94897a;
+    --amber: #ffb443;
+    --amber-dim: rgba(255, 180, 67, 0.22);
+    --amber-glow: rgba(255, 180, 67, 0.55);
+    --sage: #85c19a;
+    --sage-dim: rgba(133, 193, 154, 0.22);
+    --sage-glow: rgba(133, 193, 154, 0.5);
+    --danger: #d9695c;
+    --accent: var(--amber);
+    --accent-dim: var(--amber-dim);
+    --accent-glow: var(--amber-glow);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(ellipse 900px 600px at 50% 8%, #1d1a15 0%, var(--bg) 60%);
+    color: var(--text);
+    font-family: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    padding: 32px 16px;
+  }
+
+  .apparatus {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: rise 0.6s ease both;
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-size: 0.68rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    margin: 0 0 28px;
+    text-transform: uppercase;
+    color: var(--text);
+  }
+
+  /* ---------- Dial ---------- */
+  .dial-wrap {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin-bottom: 26px;
+  }
+
+  .dial-wrap svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    transform: rotate(-90deg);
+    overflow: visible;
+  }
+
+  .tick {
+    stroke: var(--border);
+  }
+  .tick.major {
+    stroke: #4a453a;
+  }
+
+  .track {
+    fill: none;
+    stroke: var(--panel-2);
+    stroke-width: 5;
+  }
+
+  .progress {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 5;
+    stroke-linecap: round;
+    filter: drop-shadow(0 0 6px var(--accent-glow));
+    transition: stroke-dashoffset 0.25s linear, stroke 0.4s ease, filter 0.4s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .progress { transition: stroke 0.4s ease; }
+    .apparatus { animation: none; }
+  }
+
+  .dial-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  #display {
+    font-size: 3.4rem;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -1px;
+    color: var(--text);
+    text-shadow: 0 0 18px var(--accent-glow);
+    transition: text-shadow 0.4s ease;
+  }
+
+  #mode-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent);
+    transition: color 0.4s ease;
+  }
+
+  /* ---------- Presets ---------- */
+  .presets {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .preset, .custom-toggle {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: inherit;
+    font-size: 0.78rem;
+    letter-spacing: 0.04em;
+    padding: 8px 14px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: 0.15s ease;
+  }
+
+  .preset:hover, .custom-toggle:hover {
+    color: var(--text);
+    border-color: #4a453a;
+  }
+
+  .preset.active {
+    background: var(--accent-dim);
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .custom-row {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 18px;
+  }
+
+  .custom-row.open {
+    display: flex;
+  }
+
+  .custom-row input {
+    width: 70px;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.85rem;
+    padding: 7px 10px;
+    border-radius: 7px;
+    text-align: center;
+  }
+
+  .custom-row input:focus-visible,
+  button:focus-visible,
+  .preset:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .custom-row button {
+    font-family: inherit;
+    font-size: 0.78rem;
+    padding: 7px 12px;
+    border-radius: 7px;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  /* ---------- Controls ---------- */
+  .controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 26px;
+  }
+
+  .btn {
+    font-family: inherit;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 13px 26px;
+    border-radius: 9px;
+    border: none;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 1px 0 rgba(0,0,0,0.4);
+    transition: transform 0.12s ease, box-shadow 0.12s ease, opacity 0.12s ease;
+  }
+
+  .btn:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 rgba(0,0,0,0);
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #1a1408;
+  }
+  .btn-primary:hover { opacity: 0.92; }
+
+  .btn-ghost {
+    background: var(--panel);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { color: var(--danger); border-color: var(--danger); }
+
+  /* ---------- Sessions ---------- */
+  .sessions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .sessions-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .pips {
+    display: flex;
+    gap: 7px;
+  }
+
+  .pip {
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+  }
+
+  .pip.lit {
+    background: var(--amber);
+    border-color: var(--amber);
+    box-shadow: 0 0 6px var(--amber-glow);
+  }
+
+  .status {
+    margin-top: 18px;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    min-height: 1.2em;
+    text-align: center;
+  }
+
+  .hint {
+    margin-top: 22px;
+    font-size: 0.65rem;
+    color: #605b4e;
+    letter-spacing: 0.03em;
+    text-align: center;
+  }
+
+  .hint kbd {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-family: inherit;
+  }
+
+  @media (max-width: 360px) {
+    .dial-wrap { width: 240px; height: 240px; }
+    #display { font-size: 2.9rem; }
+  }
+</style>
 </head>
 <body>
-  <div class="timer">
-    <h1>🍅 Focus Timer</h1>
-    <div id="display">25:00</div>
-    <button id="start">Start</button>
-    <button id="pause" style="display:none;">Pause</button>
-    <button class="reset" id="reset">Reset</button>
+
+<main class="apparatus" aria-labelledby="title">
+  <p class="eyebrow">Instrument No. 01</p>
+  <h1 id="title">🍅 Focus Apparatus</h1>
+
+  <div class="dial-wrap">
+    <svg viewBox="0 0 280 280" id="dial-svg" aria-hidden="true">
+      <g id="ticks"></g>
+      <circle class="track" cx="140" cy="140" r="118"></circle>
+      <circle class="progress" id="progress-ring" cx="140" cy="140" r="118"></circle>
+    </svg>
+    <div class="dial-center">
+      <div id="display">25:00</div>
+      <div id="mode-label">Focus</div>
+    </div>
   </div>
-  <script>
-    let time = 25 * 60, interval;
-    const display = document.getElementById('display'), start = document.getElementById('start'), pause = document.getElementById('pause');
-    const fmt = s => `${Math.floor(s/60).toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`;
-    const update = () => display.textContent = fmt(time);
-    start.onclick = () => {
-      start.style.display = 'none'; pause.style.display = 'inline-block';
-      interval = setInterval(() => { time > 0 ? (time--, update()) : (clearInterval(interval), alert('🎉 Focus complete!')); }, 1000);
-    };
-    pause.onclick = () => { clearInterval(interval); pause.style.display = 'none'; start.style.display = 'inline-block'; };
-    document.getElementById('reset').onclick = () => { clearInterval(interval); time = 25*60; update(); start.style.display = 'inline-block'; pause.style.display = 'none'; };
-  </script>
+
+  <div class="presets" role="group" aria-label="Focus duration presets">
+    <button class="preset" data-minutes="15">15 min</button>
+    <button class="preset active" data-minutes="25">25 min</button>
+    <button class="preset" data-minutes="50">50 min</button>
+    <button class="custom-toggle" id="custom-toggle" aria-expanded="false">Custom</button>
+  </div>
+
+  <div class="custom-row" id="custom-row">
+    <input type="number" id="custom-input" min="1" max="180" placeholder="Minutes" aria-label="Custom minutes">
+    <button id="custom-set">Set</button>
+  </div>
+
+  <div class="controls">
+    <button class="btn btn-primary" id="toggle-btn">Start</button>
+    <button class="btn btn-ghost" id="reset-btn">Reset</button>
+  </div>
+
+  <div class="sessions">
+    <span class="sessions-label">Sessions completed</span>
+    <div class="pips" id="pips"></div>
+  </div>
+
+  <p class="status" id="status" role="status" aria-live="polite"></p>
+
+  <p class="hint"><kbd>Space</kbd> start / pause &nbsp;·&nbsp; <kbd>R</kbd> reset</p>
+</main>
+
+<script>
+(() => {
+  const RADIUS = 118;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+
+  const display = document.getElementById('display');
+  const modeLabel = document.getElementById('mode-label');
+  const toggleBtn = document.getElementById('toggle-btn');
+  const resetBtn = document.getElementById('reset-btn');
+  const statusEl = document.getElementById('status');
+  const ring = document.getElementById('progress-ring');
+  const presets = [...document.querySelectorAll('.preset')];
+  const customToggle = document.getElementById('custom-toggle');
+  const customRow = document.getElementById('custom-row');
+  const customInput = document.getElementById('custom-input');
+  const customSet = document.getElementById('custom-set');
+  const pipsEl = document.getElementById('pips');
+  const root = document.documentElement;
+
+  ring.style.strokeDasharray = `${CIRCUMFERENCE}`;
+  ring.style.strokeDashoffset = '0';
+
+  // Build tick marks around the dial (60 positions, every 5th emphasized)
+  const ticksGroup = document.getElementById('ticks');
+  const cx = 140, cy = 140, outer = 140, innerMinor = 130, innerMajor = 124;
+  for (let i = 0; i < 60; i++) {
+    const angle = (i / 60) * 2 * Math.PI;
+    const isMajor = i % 5 === 0;
+    const inner = isMajor ? innerMajor : innerMinor;
+    const x1 = cx + outer * Math.cos(angle);
+    const y1 = cy + outer * Math.sin(angle);
+    const x2 = cx + inner * Math.cos(angle);
+    const y2 = cy + inner * Math.sin(angle);
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1.toFixed(2));
+    line.setAttribute('y1', y1.toFixed(2));
+    line.setAttribute('x2', x2.toFixed(2));
+    line.setAttribute('y2', y2.toFixed(2));
+    line.setAttribute('class', 'tick' + (isMajor ? ' major' : ''));
+    line.setAttribute('stroke-width', isMajor ? '2' : '1');
+    ticksGroup.appendChild(line);
+  }
+
+  const fmt = s => `${Math.floor(s / 60).toString().padStart(2, '0')}:${(s % 60).toString().padStart(2, '0')}`;
+
+  const MODES = {
+    focus:  { label: 'Focus',       accent: 'amber' },
+    short:  { label: 'Short Break', accent: 'sage'  },
+    long:   { label: 'Long Break',  accent: 'sage'  }
+  };
+
+  let workMinutes = 25;
+  let mode = 'focus';
+  let totalSeconds = workMinutes * 60;
+  let remainingSeconds = totalSeconds;
+  let endTimestamp = null;
+  let intervalId = null;
+  let running = false;
+  let sessionsCompleted = 0;
+
+  function setAccent(name) {
+    if (name === 'sage') {
+      root.style.setProperty('--accent', 'var(--sage)');
+      root.style.setProperty('--accent-dim', 'var(--sage-dim)');
+      root.style.setProperty('--accent-glow', 'var(--sage-glow)');
+    } else {
+      root.style.setProperty('--accent', 'var(--amber)');
+      root.style.setProperty('--accent-dim', 'var(--amber-dim)');
+      root.style.setProperty('--accent-glow', 'var(--amber-glow)');
+    }
+  }
+
+  function renderPips() {
+    pipsEl.innerHTML = '';
+    const shown = Math.max(4, ((sessionsCompleted - 1) % 4) + 1, sessionsCompleted % 4 === 0 && sessionsCompleted > 0 ? 4 : 0);
+    const total = 4;
+    const litCount = sessionsCompleted % 4 === 0 && sessionsCompleted > 0 ? 4 : sessionsCompleted % 4;
+    for (let i = 0; i < total; i++) {
+      const pip = document.createElement('div');
+      pip.className = 'pip' + (i < litCount ? ' lit' : '');
+      pipsEl.appendChild(pip);
+    }
+  }
+
+  function updateRing() {
+    const fraction = totalSeconds > 0 ? remainingSeconds / totalSeconds : 0;
+    ring.style.strokeDashoffset = `${CIRCUMFERENCE * (1 - fraction)}`;
+  }
+
+  function updateDisplay() {
+    display.textContent = fmt(Math.max(0, remainingSeconds));
+    modeLabel.textContent = MODES[mode].label;
+    updateRing();
+    document.title = running
+      ? `${fmt(Math.max(0, remainingSeconds))} · ${MODES[mode].label}`
+      : '🍅 Focus Apparatus';
+  }
+
+  function announce(msg) {
+    statusEl.textContent = msg;
+  }
+
+  function beep() {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const now = ctx.currentTime;
+      [880, 1320].forEach((freq, i) => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+        gain.gain.setValueAtTime(0.0001, now + i * 0.18);
+        gain.gain.exponentialRampToValueAtTime(0.18, now + i * 0.18 + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.18 + 0.28);
+        osc.connect(gain).connect(ctx.destination);
+        osc.start(now + i * 0.18);
+        osc.stop(now + i * 0.18 + 0.3);
+      });
+    } catch (e) { /* audio unavailable, fail silently */ }
+  }
+
+  function setPreset(minutes, btn) {
+    if (running) pause();
+    workMinutes = minutes;
+    mode = 'focus';
+    setAccent('amber');
+    totalSeconds = minutes * 60;
+    remainingSeconds = totalSeconds;
+    presets.forEach(p => p.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+    else presets.forEach(p => { if (+p.dataset.minutes === minutes) p.classList.add('active'); });
+    updateDisplay();
+    announce(`Set to ${minutes} minute focus session.`);
+  }
+
+  function tick() {
+    remainingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
+    updateDisplay();
+    if (remainingSeconds <= 0) complete();
+  }
+
+  function start() {
+    if (running || remainingSeconds <= 0 && totalSeconds > 0 && remainingSeconds === 0) {
+      // allow restart from zero by falling through to reset check below
+    }
+    if (remainingSeconds <= 0) remainingSeconds = totalSeconds;
+    running = true;
+    endTimestamp = Date.now() + remainingSeconds * 1000;
+    toggleBtn.textContent = 'Pause';
+    intervalId = setInterval(tick, 250);
+    announce(`${MODES[mode].label} session running.`);
+  }
+
+  function pause() {
+    running = false;
+    clearInterval(intervalId);
+    remainingSeconds = Math.max(0, Math.round((endTimestamp - Date.now()) / 1000));
+    toggleBtn.textContent = 'Start';
+    updateDisplay();
+    announce('Paused.');
+  }
+
+  function reset() {
+    running = false;
+    clearInterval(intervalId);
+    remainingSeconds = totalSeconds;
+    toggleBtn.textContent = 'Start';
+    updateDisplay();
+    announce('Timer reset.');
+  }
+
+  function complete() {
+    running = false;
+    clearInterval(intervalId);
+    remainingSeconds = 0;
+    updateDisplay();
+    beep();
+
+    if (mode === 'focus') {
+      sessionsCompleted++;
+      renderPips();
+      const nextIsLong = sessionsCompleted % 4 === 0;
+      mode = nextIsLong ? 'long' : 'short';
+      setAccent('sage');
+      totalSeconds = (nextIsLong ? 15 : 5) * 60;
+      remainingSeconds = totalSeconds;
+      toggleBtn.textContent = 'Start Break';
+      announce(`Focus session complete. Nice work — ${nextIsLong ? 'long' : 'short'} break ready.`);
+    } else {
+      mode = 'focus';
+      setAccent('amber');
+      totalSeconds = workMinutes * 60;
+      remainingSeconds = totalSeconds;
+      toggleBtn.textContent = 'Start Focus';
+      announce('Break over. Ready for the next focus session.');
+    }
+    updateDisplay();
+  }
+
+  toggleBtn.addEventListener('click', () => running ? pause() : start());
+  resetBtn.addEventListener('click', reset);
+
+  presets.forEach(btn => {
+    btn.addEventListener('click', () => setPreset(+btn.dataset.minutes, btn));
+  });
+
+  customToggle.addEventListener('click', () => {
+    const open = customRow.classList.toggle('open');
+    customToggle.setAttribute('aria-expanded', String(open));
+    if (open) customInput.focus();
+  });
+
+  customSet.addEventListener('click', () => {
+    const val = Math.min(180, Math.max(1, parseInt(customInput.value, 10) || 0));
+    if (val > 0) {
+      presets.forEach(p => p.classList.remove('active'));
+      setPreset(val, null);
+      customRow.classList.remove('open');
+      customToggle.setAttribute('aria-expanded', 'false');
+    }
+  });
+
+  customInput.addEventListener('keydown', e => {
+    if (e.key === 'Enter') customSet.click();
+  });
+
+  document.addEventListener('keydown', e => {
+    const tag = document.activeElement.tagName;
+    if (tag === 'INPUT') return;
+    if (e.code === 'Space') {
+      e.preventDefault();
+      running ? pause() : start();
+    } else if (e.key.toLowerCase() === 'r') {
+      reset();
+    }
+  });
+
+  renderPips();
+  updateDisplay();
+})();
+</script>
+
 </body>
 </html>
